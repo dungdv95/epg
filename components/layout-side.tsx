@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import * as React from "react";
 import { TooltipProvider } from "./ui/tooltip";
 import {
   ResizableHandle,
@@ -39,6 +40,16 @@ import { navItems } from "./nav/menu";
 import { useElementSize } from "./hooks/use-element-size";
 import { useWindowSize } from "./hooks/use-window-size";
 import { useStore } from "./nav/store";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "./ui/navigation-menu";
+import Link from "next/link";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -146,11 +157,96 @@ export default function LayoutSide({
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[1]}>
-          <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-            {children}
+          <div className="h-screen flex flex-col">
+            <div className="h-[52px] flex justify-between	items-center px-4">
+              <div>
+                <NavigationMenu>
+                  <NavigationMenuList>
+                    {/* <NavigationMenuItem>
+                      <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                          {pageCurrent.items.map((page, index) => (
+                            <ListItem
+                              key={index}
+                              title={page.title}
+                              href={page.url}
+                            >
+                              123
+                            </ListItem>
+                          ))}
+                        </ul>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem> */}
+                    {pageCurrent.items.map((page, index) => (
+                      <NavigationMenuItem key={index}>
+                        {page.items.length > 0 ? (
+                          <>
+                            <NavigationMenuTrigger>
+                              {page.name}
+                            </NavigationMenuTrigger>
+                            <NavigationMenuContent>
+                              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                                {page.items.map((item) => (
+                                  <ListItem
+                                    key={item.name}
+                                    title={item.title}
+                                    href={item.url}
+                                  >
+                                    {item.name}
+                                  </ListItem>
+                                ))}
+                              </ul>
+                            </NavigationMenuContent>
+                          </>
+                        ) : (
+                          <Link href={`${page.url}`} legacyBehavior passHref>
+                            <NavigationMenuLink
+                              className={navigationMenuTriggerStyle()}
+                            >
+                              {page.name}
+                            </NavigationMenuLink>
+                          </Link>
+                        )}
+                      </NavigationMenuItem>
+                    ))}
+                  </NavigationMenuList>
+                </NavigationMenu>
+              </div>
+              <div>user</div>
+            </div>
+            <div className="flex min-w-0 flex-auto flex-col overflow-hidden">
+              {children}
+            </div>
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
     </TooltipProvider>
   );
 }
+
+const ListItem = React.forwardRef<
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a">
+>(({ className, title, children, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          ref={ref}
+          className={cn(
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  );
+});
+ListItem.displayName = "ListItem";

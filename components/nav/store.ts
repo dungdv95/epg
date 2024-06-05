@@ -16,7 +16,7 @@ const initialState: State = {
     title: "Dashboard",
     icon: Inbox,
     variant: "ghost",
-    url: "/demo",
+    url: "/system",
     name: "Dashboard",
     items: [],
   },
