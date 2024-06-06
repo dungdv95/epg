@@ -36,7 +36,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { navItems } from "./nav/menu";
+import { SidebarItem, navItems } from "./nav/menu";
 import { useElementSize } from "./hooks/use-element-size";
 import { useWindowSize } from "./hooks/use-window-size";
 import { useStore } from "./nav/store";
@@ -50,6 +50,7 @@ import {
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -60,23 +61,36 @@ interface LayoutProps {
 
 export default function LayoutSide({
   children,
-  defaultLayout = [16, 86],
+  defaultLayout = [18, 82],
   defaultCollapsed = false,
   navCollapsedSize,
 }: LayoutProps) {
+  const pathName = usePathname();
   const { width, height } = useWindowSize();
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const { setTheme } = useTheme();
   const [minSize, setMinsize] = useState<number>(10);
   const [maxSize, setMaxSize] = useState<number>(14);
+  const [selectedPage, setSelectedPage] = useState<SidebarItem[]>([]);
+  const [namePage, setNamePage] = useState<string>("");
   const pageCurrent = useStore((state) => state.pageCurrent);
 
   useEffect(() => {
     if (width && width < 1370) {
-      setMinsize(12);
+      setMinsize(14);
       setMaxSize(16);
     }
   }, [width]);
+
+  useEffect(() => {
+    let page = navItems.find((el) => pathName.includes(el.url));
+    if (page) {
+      setSelectedPage(page?.items);
+      setNamePage(page.name);
+    }
+  }, [pathName]);
+
+  console.log("selectedPage", selectedPage);
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -127,7 +141,7 @@ export default function LayoutSide({
               className={cn("flex h-[52px] items-center justify-between px-4")}
             >
               <span className="text-2xl font-medium text-[#5867dd] ">
-                {pageCurrent.name}
+                {namePage}
               </span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -161,25 +175,9 @@ export default function LayoutSide({
             <div className="h-[52px] flex justify-between	items-center px-4">
               <div>
                 <NavigationMenu>
-                  <NavigationMenuList>
-                    {/* <NavigationMenuItem>
-                      <NavigationMenuTrigger>Components</NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                          {pageCurrent.items.map((page, index) => (
-                            <ListItem
-                              key={index}
-                              title={page.title}
-                              href={page.url}
-                            >
-                              123
-                            </ListItem>
-                          ))}
-                        </ul>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem> */}
-                    {pageCurrent.items.map((page, index) => (
-                      <NavigationMenuItem key={index}>
+                  <NavigationMenuList className="space-x-4">
+                    {selectedPage.map((page, index) => (
+                      <NavigationMenuItem key={index} className="">
                         {page.items.length > 0 ? (
                           <>
                             <NavigationMenuTrigger>
@@ -202,7 +200,10 @@ export default function LayoutSide({
                         ) : (
                           <Link href={`${page.url}`} legacyBehavior passHref>
                             <NavigationMenuLink
-                              className={navigationMenuTriggerStyle()}
+                              className={cn(
+                                navigationMenuTriggerStyle(),
+                                "h-8 px-6"
+                              )}
                             >
                               {page.name}
                             </NavigationMenuLink>

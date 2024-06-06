@@ -22,61 +22,50 @@ export function NavLeft({ links, isCollapsed }: NavProps) {
       data-collapsed={isCollapsed}
       className="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2"
     >
-      <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
+      <nav className="grid gap-2 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link, index) =>
           isCollapsed ? (
             <Tooltip key={index} delayDuration={0}>
               <TooltipTrigger asChild>
-                <Button
-                  size={"icon"}
-                  variant={
-                    link.url === pageCurrent.url &&
-                    link.name === pageCurrent.name
-                      ? "default"
-                      : "ghost"
-                  }
+                <Link
+                  href={link.url}
                   className={cn(
+                    buttonVariants({
+                      variant: pathName.includes(link.url)
+                        ? "default"
+                        : "ghost",
+                      size: "icon",
+                    }),
                     "h-9 w-9",
-                    link.url === pageCurrent.url &&
-                      link.name === pageCurrent.name &&
+                    pathName.includes(link.url) &&
                       "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
                   )}
-                  onClick={() => {
-                    setPageCurrent(link);
-                    router.replace(link.url);
-                  }}
                 >
                   <link.icon className="h-4 w-4" />
                   <span className="sr-only">{link.title}</span>
-                </Button>
+                </Link>
               </TooltipTrigger>
               <TooltipContent side="right" className="flex items-center gap-4">
                 {link.title}
               </TooltipContent>
             </Tooltip>
           ) : (
-            <Button
-              size={"sm"}
+            <Link
               key={index}
-              variant={
-                link.url === pageCurrent.url && link.name === pageCurrent.name
-                  ? "default"
-                  : "ghost"
-              }
+              href={link.url}
               className={cn(
-                "justify-start",
-                link.url === pageCurrent.url &&
-                  link.name === pageCurrent.name &&
-                  "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
+                buttonVariants({
+                  variant: pathName.includes(link.url) ? "default" : "ghost",
+                  size: "sm",
+                }),
+                pathName.includes(link.url) &&
+                  "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
+                "justify-start"
               )}
-              onClick={() => {
-                setPageCurrent(link);
-                router.replace(link.url);
-              }}
             >
               <link.icon className="mr-2 h-4 w-4" />
               {link.title}
-            </Button>
+            </Link>
           )
         )}
       </nav>
