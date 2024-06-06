@@ -5,5 +5,5 @@ export const metadata: Metadata = {
   title: "EPG",
 };
 export default function Page() {
-  return <div>settle back</div>;
+  return <div>Merchant Cash in</div>;
 }

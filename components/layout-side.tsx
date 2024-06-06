@@ -72,7 +72,7 @@ export default function LayoutSide({
   const [minSize, setMinsize] = useState<number>(10);
   const [maxSize, setMaxSize] = useState<number>(14);
   const [selectedPage, setSelectedPage] = useState<SidebarItem[]>([]);
-  const [namePage, setNamePage] = useState<string>("");
+  const [namePage, setNamePage] = useState<string>("Home");
   const pageCurrent = useStore((state) => state.pageCurrent);
 
   useEffect(() => {
@@ -89,8 +89,6 @@ export default function LayoutSide({
       setNamePage(page.name);
     }
   }, [pathName]);
-
-  console.log("selectedPage", selectedPage);
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -140,12 +138,16 @@ export default function LayoutSide({
             <div
               className={cn("flex h-[52px] items-center justify-between px-4")}
             >
-              <span className="text-2xl font-medium text-[#5867dd] ">
+              <span className="text-xl font-medium text-[#5867dd] truncate">
                 {namePage}
               </span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="h-7 w-7" size="icon">
+                  <Button
+                    variant="outline"
+                    className="h-7 w-7 min-w-7"
+                    size="icon"
+                  >
                     <SunIcon className="h-3 w-3 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                     <MoonIcon className="absolute h-3 w-3 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                     <span className="sr-only">Toggle theme</span>
@@ -172,7 +174,7 @@ export default function LayoutSide({
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[1]}>
           <div className="h-screen flex flex-col">
-            <div className="h-[52px] flex justify-between	items-center px-4">
+            <div className="h-[52px] flex justify-between	items-center px-4 shadow-sm">
               <div>
                 <NavigationMenu>
                   <NavigationMenuList className="space-x-4">
@@ -202,7 +204,9 @@ export default function LayoutSide({
                             <NavigationMenuLink
                               className={cn(
                                 navigationMenuTriggerStyle(),
-                                "h-8 px-6"
+                                "h-8 px-6 focus:bg-[#f1f5f9] focus:text-[#5d78ff] dark:focus:bg-gray-700",
+                                page.url === pathName &&
+                                  "bg-[#f1f5f9] text-[#5d78ff] dark:bg-gray-700"
                               )}
                             >
                               {page.name}
@@ -216,7 +220,12 @@ export default function LayoutSide({
               </div>
               <div>user</div>
             </div>
-            <div className="flex min-w-0 flex-auto flex-col overflow-hidden">
+            {/* <div
+              data-orientation="horizontal"
+              role="none"
+              className="shrink-0 bg-border h-[1px] w-full"
+            ></div> */}
+            <div className="flex min-w-0 flex-auto flex-col overflow-hidden p-4">
               {children}
             </div>
           </div>

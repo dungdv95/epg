@@ -1,4 +1,15 @@
-import { File, Inbox, LucideIcon, Send } from "lucide-react";
+import {
+  CircleUserRound,
+  File,
+  Inbox,
+  Landmark,
+  LucideIcon,
+  Receipt,
+  Recycle,
+  Send,
+  Settings,
+  Store,
+} from "lucide-react";
 
 export type SidebarItem = {
   title: string;
@@ -12,7 +23,7 @@ export type SidebarItem = {
 export const navItems: SidebarItem[] = [
   {
     title: "Hệ thống",
-    icon: File,
+    icon: Settings,
     variant: "ghost",
     url: "/system",
     name: "System",
@@ -69,7 +80,7 @@ export const navItems: SidebarItem[] = [
   },
   {
     title: "Master Merchant",
-    icon: File,
+    icon: Store,
     variant: "ghost",
     url: "/master-merchant",
     name: "Master Merchant",
@@ -94,7 +105,7 @@ export const navItems: SidebarItem[] = [
   },
   {
     title: "Merchant Personal",
-    icon: File,
+    icon: CircleUserRound,
     variant: "ghost",
     url: "/merchant-personal",
     name: "Merchant Personal",
@@ -119,7 +130,7 @@ export const navItems: SidebarItem[] = [
   },
   {
     title: "Merchant Corp",
-    icon: File,
+    icon: Landmark,
     variant: "ghost",
     url: "/merchant-corp",
     name: "Merchant Corp",
@@ -144,7 +155,7 @@ export const navItems: SidebarItem[] = [
   },
   {
     title: "Merchant CashIn",
-    icon: File,
+    icon: Receipt,
     variant: "ghost",
     url: "/merchant-cashin",
     name: "Merchant CashIn",
@@ -169,7 +180,7 @@ export const navItems: SidebarItem[] = [
   },
   {
     title: "Merchant Branch",
-    icon: File,
+    icon: Recycle,
     variant: "ghost",
     url: "/merchant-branch",
     name: "Merchant Branch",
