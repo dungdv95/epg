@@ -71,8 +71,20 @@ export default function LayoutSide({
   const { setTheme } = useTheme();
   const [minSize, setMinsize] = useState<number>(10);
   const [maxSize, setMaxSize] = useState<number>(14);
-  const [selectedPage, setSelectedPage] = useState<SidebarItem[]>([]);
-  const [namePage, setNamePage] = useState<string>("Home");
+  const [selectedPage, setSelectedPage] = useState<SidebarItem[]>(() => {
+    let page = navItems.find((el) => pathName.includes(el.url));
+    if (page) {
+      return page.items;
+    }
+    return [];
+  });
+  const [namePage, setNamePage] = useState<string>(() => {
+    let page = navItems.find((el) => pathName.includes(el.url));
+    if (page) {
+      return page.name;
+    }
+    return "Home";
+  });
   const pageCurrent = useStore((state) => state.pageCurrent);
 
   useEffect(() => {
@@ -175,49 +187,53 @@ export default function LayoutSide({
         <ResizablePanel defaultSize={defaultLayout[1]}>
           <div className="h-screen flex flex-col">
             <div className="h-[52px] flex justify-between	items-center px-4 shadow-sm">
-              <div>
-                <NavigationMenu>
-                  <NavigationMenuList className="space-x-4">
-                    {selectedPage.map((page, index) => (
-                      <NavigationMenuItem key={index} className="">
-                        {page.items.length > 0 ? (
-                          <>
-                            <NavigationMenuTrigger>
-                              {page.name}
-                            </NavigationMenuTrigger>
-                            <NavigationMenuContent>
-                              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                                {page.items.map((item) => (
-                                  <ListItem
-                                    key={item.name}
-                                    title={item.title}
-                                    href={item.url}
-                                  >
-                                    {item.name}
-                                  </ListItem>
-                                ))}
-                              </ul>
-                            </NavigationMenuContent>
-                          </>
-                        ) : (
-                          <Link href={`${page.url}`} legacyBehavior passHref>
-                            <NavigationMenuLink
-                              className={cn(
-                                navigationMenuTriggerStyle(),
-                                "h-8 px-6 focus:bg-[#f1f5f9] focus:text-[#5d78ff] dark:focus:bg-gray-700",
-                                page.url === pathName &&
-                                  "bg-[#f1f5f9] text-[#5d78ff] dark:bg-gray-700"
-                              )}
-                            >
-                              {page.name}
-                            </NavigationMenuLink>
-                          </Link>
-                        )}
-                      </NavigationMenuItem>
-                    ))}
-                  </NavigationMenuList>
-                </NavigationMenu>
-              </div>
+              {width && width > 1200 ? (
+                <div>
+                  <NavigationMenu>
+                    <NavigationMenuList className="space-x-4">
+                      {selectedPage.map((page, index) => (
+                        <NavigationMenuItem key={index} className="">
+                          {page.items.length > 0 ? (
+                            <>
+                              <NavigationMenuTrigger>
+                                {page.name}
+                              </NavigationMenuTrigger>
+                              <NavigationMenuContent>
+                                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                                  {page.items.map((item) => (
+                                    <ListItem
+                                      key={item.name}
+                                      title={item.title}
+                                      href={item.url}
+                                    >
+                                      {item.name}
+                                    </ListItem>
+                                  ))}
+                                </ul>
+                              </NavigationMenuContent>
+                            </>
+                          ) : (
+                            <Link href={`${page.url}`} legacyBehavior passHref>
+                              <NavigationMenuLink
+                                className={cn(
+                                  navigationMenuTriggerStyle(),
+                                  "h-8 px-6 focus:bg-[#f1f5f9] focus:text-[#5d78ff] dark:focus:bg-gray-700",
+                                  page.url === pathName &&
+                                    "bg-[#f1f5f9] text-[#5d78ff] dark:bg-gray-700"
+                                )}
+                              >
+                                {page.name}
+                              </NavigationMenuLink>
+                            </Link>
+                          )}
+                        </NavigationMenuItem>
+                      ))}
+                    </NavigationMenuList>
+                  </NavigationMenu>
+                </div>
+              ) : (
+                <></>
+              )}
               <div>user</div>
             </div>
             {/* <div
