@@ -17,6 +17,7 @@ import {
   Facebook,
   File,
   Inbox,
+  List,
   MessagesSquare,
   MoonIcon,
   PenBox,
@@ -35,7 +36,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { SidebarItem, navItems } from "./nav/menu";
 import { useElementSize } from "./hooks/use-element-size";
 import { useWindowSize } from "./hooks/use-window-size";
@@ -51,6 +52,14 @@ import {
 } from "./ui/navigation-menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useNotice } from "./notice/confirm-error";
+import { useMutation } from "@tanstack/react-query";
+import apiAuth from "@/lib/apis/auth";
+import { useLoginStore } from "@/app/login/store";
+import { jwtDecode } from "jwt-decode";
+import dayjs from "dayjs";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { UserNav } from "./user-nav";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -85,7 +94,50 @@ export default function LayoutSide({
     }
     return "Home";
   });
-  const pageCurrent = useStore((state) => state.pageCurrent);
+  const { setOpenDialog } = useNotice();
+  const [reLoad, setReLoad] = useState(false);
+
+  const refresh = useMutation({
+    mutationFn: apiAuth.tokenRefresh,
+    onSuccess: (data: any) => {
+      console.log("data", data);
+      setReLoad(true);
+      useLoginStore.getState().refresh(data?.access_token, data?.refresh_token);
+    },
+    onError: (error: any) => {
+      setOpenDialog(error);
+    },
+  });
+
+  // useEffect(() => {
+  //   async function actionRefresh() {
+  //     let accessToken = useLoginStore.getState().accessToken;
+  //     let refreshToken = useLoginStore.getState().refreshToken;
+
+  //     if (!refreshToken) {
+  //       setOpenDialog({ code: "401", message: "Phiên đăng nhập hết hạn" });
+  //     } else {
+  //       const infoRefreshToken = jwtDecode(refreshToken);
+  //       const isExpRefresh =
+  //         dayjs.unix(infoRefreshToken.exp!).diff(dayjs()) < 1;
+
+  //       if (!isExpRefresh) {
+  //         refresh.mutateAsync({
+  //           refreshToken,
+  //         });
+  //       } else {
+  //         setOpenDialog({ code: "401", message: "Phiên đăng nhập hết hạn" });
+  //       }
+  //     }
+  //   }
+
+  //   actionRefresh();
+
+  //   const intervalId = setInterval(() => {
+  //     actionRefresh();
+  //   }, 250000);
+  //   return () => clearInterval(intervalId);
+  // }, []);
 
   useEffect(() => {
     if (width && width < 1370) {
@@ -101,6 +153,21 @@ export default function LayoutSide({
       setNamePage(page.name);
     }
   }, [pathName]);
+
+  // if (refresh.isLoading) {
+  //   return (
+  //     <>
+  //       <div className="h-full flex fixed inset-0 bg-background/80 backdrop-blur-sm z-[60]"></div>
+  //       <div className="fixed left-[50%] top-[50%] z-[70] text-base opacity-80">
+  //         Đang đồng bộ dữ liệu...
+  //       </div>
+  //     </>
+  //   );
+  // }
+
+  // if (!reLoad) {
+  //   return <></>;
+  // }
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -232,9 +299,40 @@ export default function LayoutSide({
                   </NavigationMenu>
                 </div>
               ) : (
-                <></>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="icon" className="h-8 w-8">
+                      <List className="h-[14px] w-[14px]" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[230px]" align="start">
+                    <div className="flex flex-col gap-4">
+                      {selectedPage.map((page, index) => (
+                        <Link
+                          href={page.url}
+                          className={cn(
+                            buttonVariants({
+                              variant:
+                                page.url === pathName ? "default" : "ghost",
+                              size: "sm",
+                            }),
+                            page.url === pathName &&
+                              "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
+                            "justify-start"
+                          )}
+                        >
+                          {page.title}
+                        </Link>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
               )}
-              <div>user</div>
+              <div className="flex items-center space-x-4">
+                {/* <Search /> */}
+                <div>123</div>
+                <UserNav />
+              </div>
             </div>
             {/* <div
               data-orientation="horizontal"

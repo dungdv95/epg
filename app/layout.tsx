@@ -4,11 +4,14 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Providers from "@/app/providers";
+import { Toaster } from "@/components/ui/toaster";
+import { ErrorConfirm } from "@/components/notice/confirm-error";
+import { Confirmer } from "@/components/notice/confirm";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "EPG",
+  title: "NPS",
 };
 
 export default function RootLayout({
@@ -27,9 +30,9 @@ export default function RootLayout({
         >
           <TooltipProvider delayDuration={200}>
             <Providers>{children}</Providers>
-            {/* <Toaster />
+            <Toaster />
             <ErrorConfirm />
-            <Confirmer /> */}
+            <Confirmer />
           </TooltipProvider>
         </ThemeProvider>
       </body>
